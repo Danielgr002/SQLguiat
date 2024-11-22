@@ -54,10 +54,7 @@ public class SQLiteJDBC {
             System.out.println("Nif         |   Nom     |    Cognoms    |       Salari");
             System.out.println("------------------------------------------------------");
             while (res.next()){
-                String nif = res.getString("nif");
-                String nom = res.getString("nom");
-                String cognoms = res.getString("cognoms");
-                Double salari = res.getDouble("salari");
+                
             }
 
             res.close();
