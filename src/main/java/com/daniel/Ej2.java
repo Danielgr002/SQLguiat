@@ -44,6 +44,7 @@ public class Ej2 {
                                                 "FROM Empleats e\n"+
                                                 "LEFT JOIN Departaments d ON e.IdDepartament = d.IdDepartament;\n");
 
+            System.out.println("Consueltes 1");
             while (resultat.next()){
                 String nif= resultat.getString("NIF");
                 String nom = resultat.getString("Nom");
@@ -51,11 +52,67 @@ public class Ej2 {
                 String nom_dep = resultat.getString("NomDepartament");
                 System.out.println(nif+" | "+nom+" | "+cognom+" | "+nom_dep);
             }
+
+            System.out.println("Consueltes 2");
+            resultat= sentenciaSQL.executeQuery("SELECT NIF, Nom, Cognoms\n"+
+                                                    "FROM EMPLEATS;");
+            while (resultat.next()){
+                String nif = resultat.getString("NIF");
+                String nom = resultat.getString("Nom");
+                String cognom = resultat.getString("Cognoms");
+                System.out.println(nif+" | "+nom+" | "+cognom);
+            }
+            System.out.println("Consulta 3");
+            System.out.println("que departamento:");
+            String departament="Recursos Humans";
+            res="SELECT e.Nom, d.NomDepartament\n"+
+                    "FROM Empleats e\n"+
+                    "LEFT JOIN Departaments d ON e.IdDepartament = d.IdDepartament\n"+
+                    "WHERE d.NomDepartament=?";
+            PreparedStatement statement = connection.prepareStatement(res);
+            statement.setString(1,departament);
+            resultat = statement.executeQuery();
+            while (resultat.next()){
+                String nom = resultat.getString("Nom");
+                String nom_dep = resultat.getString("NomDepartament");
+                System.out.println("Nombre: " + nom + ", NomDepartament: "+nom_dep);
+            }
+
+            System.out.println("Consulta 4");
+            System.out.println("Que Salario:");
+            Double salari=2700.5;
+            res="SELECT Nom, Salari\n"+
+                    "FROM Empleats\n"+
+                    "WHERE Salari>?";
+            PreparedStatement statement2 = connection.prepareStatement(res);
+            statement2.setDouble(1,salari);
+            resultat = statement2.executeQuery();
+            while (resultat.next()){
+                String nom = resultat.getString("Nom");
+                Double sal = resultat.getDouble("Salari");
+                System.out.println("Nombre: " + nom + ", Salari: "+sal);
+            }
+
+            System.out.println("Consulta 5");
+            resultat= sentenciaSQL.executeQuery("SELECT NIF, Nom, Cognoms\n" +
+                                                    "FROM Empleats\n" +
+                                                    "WHERE IdDepartament IN \n" +
+                                                    "   (SELECT IdDepartament\n" +
+                                                    "    FROM Empleats\n" +
+                                                    "    GROUP BY IdDepartament\n" +
+                                                    "    HAVING COUNT(*) > 2);");
+            while (resultat.next()){
+                String nif = resultat.getString("NIF");
+                String nom = resultat.getString("Nom");
+                String cog = resultat.getString("Cognoms");
+                System.out.println("Nombre: " + nom + ", Cognoms: "+cog+", NIF: "+nif);
+            }
+
+
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
         System.out.println("Conexon establecida...");
-
 
     }
 }
