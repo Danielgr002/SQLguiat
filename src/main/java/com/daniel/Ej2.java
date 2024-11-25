@@ -202,13 +202,6 @@ public class Ej2 {
                 String nom_dep = resultat.getString("NomDepartament");
                 System.out.println("NIF: " + Nif + ", Cognoms: "+cog+", Nom: "+nom+" Nom_dep: "+nom_dep);
             }
-            while (resultat.next()){
-                String Nif = resultat.getString("NIF");
-                String cog = resultat.getString("Cognoms");
-                String nom = resultat.getString("Nom");
-                String nom_dep = resultat.getString("NomDepartament");
-                System.out.println("NIF: " + Nif + ", Cognoms: "+cog+", Nom: "+nom+"NomDep: "+nom_dep);
-            }
 
 
 
