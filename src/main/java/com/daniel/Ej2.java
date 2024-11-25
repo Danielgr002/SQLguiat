@@ -93,7 +93,7 @@ public class Ej2 {
                 System.out.println("Nombre: " + nom + ", Salari: "+sal);
             }
 
-            System.out.println("Consulta 5");
+            System.out.println("Consulta 5:");
             resultat= sentenciaSQL.executeQuery("SELECT NIF, Nom, Cognoms\n" +
                                                     "FROM Empleats\n" +
                                                     "WHERE IdDepartament IN \n" +
@@ -107,6 +107,109 @@ public class Ej2 {
                 String cog = resultat.getString("Cognoms");
                 System.out.println("Nombre: " + nom + ", Cognoms: "+cog+", NIF: "+nif);
             }
+            System.out.println("No hay departamentos con mas de 2 Empleados(justo son 2)");
+
+            System.out.println("Consulta 6:");
+            System.out.println("Que nif:");
+            String nif="123456789";
+            res="SELECT e.NIF, e.Nom, e.Cognoms, d.IdDepartament\n" +
+                    "FROM Empleats e JOIN Departaments d ON e.idDepartament = d.idDepartament\n" +
+                    "WHERE e.NIF = ?;";
+            PreparedStatement statement3 = connection.prepareStatement(res);
+            statement3.setString(1,nif);
+            resultat = statement3.executeQuery();
+            while (resultat.next()){
+                String id = resultat.getString("idDepartament");
+                String Nif = resultat.getString("NIF");
+                String nom = resultat.getString("Nom");
+                System.out.println("Nombre: " + nom + ", NIF: "+Nif+" id: "+id);
+            }
+
+            System.out.println("Consulta 7:");
+            resultat= sentenciaSQL.executeQuery("SELECT e.Nom, e.Cognoms, e.Salari, d.NomDepartament\n"+
+                    "FROM Empleats e JOIN Departaments d ON e.IdDepartament = d.IdDepartament\n"+
+                    "WHERE e.salari > (\n"+
+                            "SELECT AVG(e2.Salari)\n"+
+                            "FROM Empleats e2\n"+
+                            "WHERE e2.IdDepartament = e.IdDepartament);");
+            while (resultat.next()){
+                String nom = resultat.getString("Nom");
+                String cog = resultat.getString("Cognoms");
+                Double sal = resultat.getDouble("Salari");
+                String n_dep = resultat.getString("NomDepartament");
+                System.out.println("Nombre: " + nom + ", Cognoms: "+cog+", NIF: "+nif+", Salari: "+sal+" Nom dep: "+ n_dep);
+            }
+
+            System.out.println("Consulta 8");
+            System.out.println("Que Salario:");
+            int id=1;
+            res="SELECT d.IdDepartament, d.NomDepartament,\n" +
+                    "     (SELECT SUM(e.Salari) \n" +
+                    "     FROM Empleats e \n" +
+                    "     WHERE e.IdDepartament = d.IdDepartament) AS suma_salaris\n" +
+                    "FROM Departaments d\n" +
+                    "     WHERE (SELECT SUM(e.Salari) \n" +
+                    "                 FROM Empleats e \n" +
+                    "                 WHERE e.IdDepartament = d.IdDepartament) > ?;\n";
+            PreparedStatement statement4 = connection.prepareStatement(res);
+            statement4.setInt(1,id);
+            resultat = statement4.executeQuery();
+            while (resultat.next()){
+                String nom = resultat.getString("NomDepartament");
+                int idd = resultat.getInt("IdDepartament");
+                System.out.println("Nombre: " + nom + ", ID DEP: "+idd);
+            }
+
+            System.out.println("Consulta 9:");
+            resultat= sentenciaSQL.executeQuery("SELECT NIF, Nom, Cognoms\n"+
+                    "FROM Empleats\n"+
+                    "WHERE IdDepartament IS NULL");
+
+            while (resultat.next()){
+                String Nif = resultat.getString("NIF");
+                String cog = resultat.getString("Cognoms");
+                String nom = resultat.getString("Nom");
+                System.out.println("NIF: " + Nif + ", Cognoms: "+cog+", Nom: "+nom);
+            }
+
+            System.out.println("No hay empleados cuyo id de departamento sea null");
+
+            System.out.println("Consulta 10");
+            String NOMBRE="Recursos Humans";
+            res="SELECT MAX(e.salari) AS salari_maxim, MIN(e.salari) AS salari_minim\n" +
+                    "FROM Empleats e JOIN Departaments d ON e.IdDepartament = d.IdDepartament\n" +
+                    "WHERE d.NomDepartament = ?;";
+            PreparedStatement statement5 = connection.prepareStatement(res);
+            statement5.setString(1,NOMBRE);
+            resultat = statement5.executeQuery();
+            while (resultat.next()){
+                Double salriMax = resultat.getDouble("salari_maxim");
+                Double salariMin = resultat.getDouble("salari_minim");
+                System.out.println("MIN: " + salariMin + ", MAX: "+salriMax);
+            }
+
+            System.out.println("Consulta 11:");
+            res= "SELECT e.NIF, e.Nom, e.Cognoms, d.NomDepartament\n" +
+                    "FROM Empleats e JOIN Departaments d ON e.IdDepartament = d.IdDepartament\n" +
+                    "WHERE d.NomDepartament LIKE ?;\n";
+            PreparedStatement statement6 = connection.prepareStatement(res);
+            statement6.setString(1,"Desenvolupament");
+            resultat = statement6.executeQuery();
+            while (resultat.next()){
+                String nom = resultat.getString("Nom");
+                String Nif = resultat.getString("NIF");
+                String cog = resultat.getString("Cognoms");
+                String nom_dep = resultat.getString("NomDepartament");
+                System.out.println("NIF: " + Nif + ", Cognoms: "+cog+", Nom: "+nom+" Nom_dep: "+nom_dep);
+            }
+            while (resultat.next()){
+                String Nif = resultat.getString("NIF");
+                String cog = resultat.getString("Cognoms");
+                String nom = resultat.getString("Nom");
+                String nom_dep = resultat.getString("NomDepartament");
+                System.out.println("NIF: " + Nif + ", Cognoms: "+cog+", Nom: "+nom+"NomDep: "+nom_dep);
+            }
+
 
 
         } catch (SQLException ex) {
